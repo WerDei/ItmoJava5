@@ -73,7 +73,7 @@ public class CollectionHandler
     }
 
 
-    // Safe and load
+    // Saving and loading
 
     public void loadFromFile(String filePath)
     {
