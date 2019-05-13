@@ -58,12 +58,18 @@ public enum Commands {
                         collection.printElements();
                         return true;
                     }
+                    else if ((args.length == 1) && (args[0] == "-json"))
+                    {
+                        System.out.println(collection.getJsonFromCollection());
+                        return true;
+                    }
                     else return false;
                 }
 
                 @Override
                 protected void printUsage() {
-                    System.out.println("show");
+                    System.out.println("show\n"
+                            + "show -json");
                 }
             },
     ADD("add")

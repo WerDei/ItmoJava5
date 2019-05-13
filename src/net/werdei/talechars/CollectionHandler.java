@@ -34,13 +34,10 @@ public class CollectionHandler
         return characters.size();
     }
 
-
-    //Operations
-
-    public CollectionHandler(String filePath)
+    public String getJsonFromCollection()
     {
-        this();
-        loadFromFile(filePath);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(characters);
     }
 
 
@@ -95,10 +92,12 @@ public class CollectionHandler
 
             creationDate = LocalDate.now();
             creationTime = LocalTime.now();
+
+            System.out.println("Successfully loaded collection from " + file.getAbsolutePath());
         }
         catch (Exception e)
         {
-            System.out.println(e.getMessage());
+            System.out.println("Loading failed: " + e.getMessage());
         }
     }
 
@@ -113,9 +112,7 @@ public class CollectionHandler
         if (file == null)
             throw new RuntimeException("File is not initialised");
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(characters);
-        System.out.println(json);
+        String json = getJsonFromCollection();
 
         String[] jsonLines = json.split("\n");
 
@@ -128,12 +125,13 @@ public class CollectionHandler
             }
 
             writer.close();
+
+            System.out.println("Successfully saved collection to " + file.getAbsolutePath());
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println("Saving failed: " + e.getMessage());
         }
-
     }
 
 
