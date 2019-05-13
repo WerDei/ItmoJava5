@@ -78,14 +78,21 @@ public enum Commands {
                 protected boolean executeCommand(String[] args) {
                     if (args.length == 1)
                     {
-                        addElement(args[0]);
-                        return true;
-                    }
-                    else if ((args.length == 2) && args[0].equals("-ifmax"))
-                    {
-                        if (collection.compareToMax(args[1]) > 1)
-                            addElement(args[1]);
-                        return true;
+                        if (args[0].contains("-ifmax"))
+                        {
+                            args = args[0].split(" ", 2);
+                            if (collection.compareToMax(args[1]) > 1)
+                                addElement(args[1]);
+                            else
+                                System.out.println("Element is not bigger than "
+                                        + "the existing ones and was not added");
+                            return true;
+                        }
+                        else
+                        {
+                            addElement(args[0]);
+                            return true;
+                        }
                     }
                     return false;
                 }
@@ -94,6 +101,7 @@ public enum Commands {
                 {
                     try {
                         collection.addCharacter(json);
+                        System.out.println("Element successfully added");
                     }
                     catch (JsonSyntaxException | JsonCharacterNameNotGiven e)
                     {
