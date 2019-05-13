@@ -24,7 +24,7 @@ public class Main
 
         // Защита от Письмака
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> charCollection.saveToFile("./backup.json")));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> charCollection.saveToFile("backup.json")));
 
 
         // Начало работы

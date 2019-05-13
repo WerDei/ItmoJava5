@@ -58,7 +58,7 @@ public enum Commands {
                         collection.printElements();
                         return true;
                     }
-                    else if ((args.length == 1) && (args[0] == "-json"))
+                    else if ((args.length == 1) && (args[0].equals("-json")))
                     {
                         System.out.println(collection.getJsonFromCollection());
                         return true;
