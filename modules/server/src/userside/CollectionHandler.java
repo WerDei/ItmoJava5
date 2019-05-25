@@ -1,16 +1,20 @@
-package net.werdei.talechars;
+package net.werdei.talechars.server.userside;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.werdei.talechars.server.UserThread;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 public class CollectionHandler
 {
+    private UserThread userThread;
+
     private File file;
     private TreeSet<Character> characters;
     private LocalDate creationDate;
@@ -19,8 +23,10 @@ public class CollectionHandler
     private LocalTime modificationTime;
 
 
-    public CollectionHandler()
+    public CollectionHandler(UserThread thread)
     {
+        userThread = thread;
+
         characters = new TreeSet<>();
         creationTime = modificationTime = LocalTime.now();
         creationDate = modificationDate = LocalDate.now();
@@ -51,7 +57,7 @@ public class CollectionHandler
     public void addCharacter(Character c)
     {
         if(characters.add(c))
-            collectionUpdaded();
+            collectionUpdated();
         else
             System.out.println("Character with that name already exists");
     }
@@ -64,7 +70,7 @@ public class CollectionHandler
     public void removeCharacter(Character c)
     {
         if(characters.remove(c))
-            collectionUpdaded();
+            collectionUpdated();
         else
             System.out.println("No such character was found");
     }
@@ -147,20 +153,20 @@ public class CollectionHandler
 
     public void printElements()
     {
-        System.out.println("Current collection elements:");
+        userThread.sendln("Current collection elements:");
 
-        int i = 0;
-        for (Character character : characters)
-        {
-            System.out.println(++i + ": " + character.toString());
-        }
+        Object[] array = characters.toArray();
+        Stream.iterate(1, x -> x + 1)
+                .limit(array.length)
+                .map(x -> x + ": " + array[x - 1].toString())
+                .forEach(userThread::sendln);
     }
 
     public void printInfo()
     {
-        System.out.println("Element count: " + getLength());
-        System.out.println("First population: " + creationDate + " " + creationTime);
-        System.out.println("Last modification: " + modificationDate + " " + modificationTime);
+        userThread.sendln("Element count: " + getLength());
+        userThread.sendln("First population: " + creationDate + " " + creationTime);
+        userThread.sendln("Last modification: " + modificationDate + " " + modificationTime);
     }
 
 
@@ -174,7 +180,7 @@ public class CollectionHandler
         return c;
     }
 
-    private void collectionUpdaded()
+    private void collectionUpdated()
     {
         modificationTime = LocalTime.now();
         modificationDate = LocalDate.now();

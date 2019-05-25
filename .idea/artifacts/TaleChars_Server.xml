@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="TaleChars Server">
+    <output-path>$PROJECT_DIR$/out/artifacts/TaleChars_Server</output-path>
+    <root id="archive" name="talechars_server.jar">
+      <element id="module-output" name="TaleChars_Server" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/modules/server/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="TaleChars" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/modules/server/gson-2.8.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

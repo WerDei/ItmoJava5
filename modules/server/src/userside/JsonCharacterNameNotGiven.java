@@ -1,4 +1,4 @@
-package net.werdei.talechars;
+package net.werdei.talechars.server.userside;
 
 public class JsonCharacterNameNotGiven extends RuntimeException
 {
