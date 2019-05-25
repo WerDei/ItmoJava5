@@ -1,8 +1,8 @@
 package net.werdei.talechars.server;
 
-import net.werdei.talechars.server.userside.Character;
-import net.werdei.talechars.server.userside.CollectionHandler;
-import net.werdei.talechars.server.userside.Commands;
+import net.werdei.talechars.server.collections.Character;
+import net.werdei.talechars.server.collections.CollectionHandler;
+import net.werdei.talechars.server.collections.Commands;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

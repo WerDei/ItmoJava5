@@ -1,4 +1,4 @@
-package net.werdei.talechars.server.userside;
+package net.werdei.talechars.server.collections;
 
 import com.google.gson.JsonSyntaxException;
 import net.werdei.talechars.server.UserThread;

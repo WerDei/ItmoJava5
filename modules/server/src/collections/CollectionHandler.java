@@ -1,4 +1,4 @@
-package net.werdei.talechars.server.userside;
+package net.werdei.talechars.server.collections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -59,7 +59,7 @@ public class CollectionHandler
         if(characters.add(c))
             collectionUpdated();
         else
-            System.out.println("Character with that name already exists");
+            userThread.sendln("Character with that name already exists");
     }
 
     public void removeCharacter(String json)
@@ -72,7 +72,7 @@ public class CollectionHandler
         if(characters.remove(c))
             collectionUpdated();
         else
-            System.out.println("No such character was found");
+            userThread.sendln("No such character was found");
     }
 
 
@@ -91,20 +91,25 @@ public class CollectionHandler
             while ((line = bufferedReader.readLine()) != null)
                 jsonString += line;
 
-            Gson gson = new Gson();
-            Character[] characterDummyArray = gson.fromJson(jsonString, Character[].class);
-
-            characters.addAll(Arrays.asList(characterDummyArray));
+            loadFromJson(jsonString);
 
             creationDate = LocalDate.now();
             creationTime = LocalTime.now();
 
-            System.out.println("Successfully loaded collection from " + file.getAbsolutePath());
+            userThread.sendln("Collection successfully loaded");
         }
         catch (Exception e)
         {
-            System.out.println("Loading failed: " + e.getMessage());
+            userThread.sendln("Loading failed: " + e.getMessage());
         }
+    }
+
+    public void loadFromJson(String json)
+    {
+        Gson gson = new Gson();
+        Character[] characterDummyArray = gson.fromJson(json, Character[].class);
+
+        characters.addAll(Arrays.asList(characterDummyArray));
     }
 
     public void saveToFile(String filePath)
@@ -132,10 +137,11 @@ public class CollectionHandler
 
             writer.close();
 
-            System.out.println("Successfully saved collection to " + file.getAbsolutePath());
+            userThread.sendln("Collection successfully saved");
         }
         catch (Exception e)
         {
+            userThread.sendln("Saving failed: " + e.getMessage());
             System.out.println("Saving failed: " + e.getMessage());
         }
     }
