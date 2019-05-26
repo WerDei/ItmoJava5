@@ -4,6 +4,7 @@ import net.werdei.talechars.NetworkInfo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Scanner;
@@ -22,14 +23,20 @@ public final class Main
     // User Input
     private static Scanner reader;
 
+
     static public void main(String[] args)
     {
-        String address = NetworkInfo.defaultAddress;
+        reader = new Scanner(System.in);
+        socket = new Socket();
+        InetAddress address = null;
         int port = NetworkInfo.defaultPort;
 
+
+        // Trying to use address and port from input, if failing - using the defaults
         try
         {
-            address = args[0];
+            address = InetAddress.getByName(NetworkInfo.defaultAddress);
+            address = InetAddress.getByName(args[0]);
         }
         catch (Exception e){
             System.out.println("Using the default address");
@@ -44,15 +51,12 @@ public final class Main
         }
 
 
-        reader = new Scanner(System.in);
-        socket = new Socket();
-
+        // Main loop
         while (true)
         {
-            while (!connectionEstablished)
-            {
-                attemptConnection(address, port);
-            }
+            if (!connectionEstablished)
+                if (!connect(address, port, 10))
+                    break;
 
             readInputAndSendToServer();
 
@@ -65,17 +69,38 @@ public final class Main
         reader.close();
     }
 
-    private static void attemptConnection(String address, int port)
+    private static boolean connect(InetAddress address, int port, int attempts)
     {
-        System.out.println("Attempting a connection to " + address + " on port " + port);
+        System.out.println("Connecting to " + address + " on port " + port);
 
+        while (!connectionEstablished)
+        {
+            --attempts;
+            if (attempts <= 0)
+            {
+                System.out.println();
+                System.out.println("Server is currently unavailable. " +
+                        "Check the connection data or try again later.");
+                return false;
+            }
+
+            attemptConnection(address, port);
+
+            System.out.print(" .");
+        }
+
+        System.out.println(" connection established");
+        return true;
+    }
+
+    private static void attemptConnection(InetAddress address, int port)
+    {
         try
         {
             socket.close();
             socket = new Socket(address, port);
 
             //If no exceptions were thrown, we have successfully connected
-            System.out.println("Connection established");
             connectionEstablished = true;
 
             // Initialising input and output streams

@@ -12,14 +12,27 @@ public class Main
 
     public static void main(String[] args)
     {
+        // Emergency saving
+        Runtime.getRuntime().addShutdownHook(new Thread(
+                () -> connectedUsers.forEach(x -> x.getCollection().saveToFile())));
+
+        int port = NetworkInfo.defaultPort;
+        try
+        {
+            port = Integer.parseInt(args[1]);
+        }
+        catch (Exception e){
+            System.out.println("Using the default port");
+        }
+
         connectedUsers = new ArrayList<>();
 
         try
         {
-            serverSocket = new ServerSocket(NetworkInfo.defaultPort);
+            serverSocket = new ServerSocket(port);
 
             System.out.println("Successfully started the server");
-            System.out.println("Waiting for connections on port " + NetworkInfo.defaultPort);
+            System.out.println("Waiting for connections on port " + port);
 
             while (true)
             {
