@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.werdei.talechars.server.UserThread;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Stream;
 
 public class CollectionHandler
@@ -16,7 +19,7 @@ public class CollectionHandler
     private UserThread userThread;
 
     private File file;
-    private TreeSet<Character> characters;
+    private ConcurrentSkipListSet<Character> characters;
     private LocalDate creationDate;
     private LocalTime creationTime;
     private LocalDate modificationDate;
@@ -27,7 +30,7 @@ public class CollectionHandler
     {
         userThread = thread;
 
-        characters = new TreeSet<>();
+        characters = new ConcurrentSkipListSet<>();
         creationTime = modificationTime = LocalTime.now();
         creationDate = modificationDate = LocalDate.now();
     }
@@ -91,7 +94,7 @@ public class CollectionHandler
             while ((line = bufferedReader.readLine()) != null)
                 jsonString += line;
 
-            loadFromJson(jsonString);
+            jsonImport(jsonString);
 
             creationDate = LocalDate.now();
             creationTime = LocalTime.now();
@@ -105,6 +108,23 @@ public class CollectionHandler
     }
 
     public void loadFromJson(String json)
+    {
+        try
+        {
+            jsonImport(json);
+
+            creationDate = LocalDate.now();
+            creationTime = LocalTime.now();
+
+            userThread.sendln("Collection successfully imported");
+        }
+        catch (Exception e)
+        {
+            userThread.sendln("Importing failed: " + e.getMessage());
+        }
+    }
+
+    private void jsonImport(String json)
     {
         Gson gson = new Gson();
         Character[] characterDummyArray = gson.fromJson(json, Character[].class);
@@ -166,6 +186,9 @@ public class CollectionHandler
                 .limit(array.length)
                 .map(x -> x + ": " + array[x - 1].toString())
                 .forEach(userThread::sendln);
+
+        if (array.length == 0)
+            userThread.sendln("(empty)");
     }
 
     public void printInfo()

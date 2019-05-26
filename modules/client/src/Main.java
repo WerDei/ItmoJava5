@@ -89,7 +89,7 @@ public final class Main
             System.out.print(" .");
         }
 
-        System.out.println(" connection established");
+        System.out.println(" connection established.");
         return true;
     }
 

@@ -148,7 +148,7 @@ public enum Commands {
             {
                 @Override
                 protected boolean executeCommand(List<String> args, UserThread userThread) {
-                    if (args.size() == 1)
+                    if (args.size() == 0)
                     {
                         userThread.getCollection().loadFromFile("backup.json");
                         return true;
@@ -170,11 +170,6 @@ public enum Commands {
                         userThread.getCollection().saveToFile();
                         return true;
                     }
-                    else if (args.size() == 1)
-                    {
-                        userThread.getCollection().saveToFile(args.get(0));
-                        return true;
-                    }
                     return false;
                 }
 
@@ -182,7 +177,44 @@ public enum Commands {
                 protected String getUsage() {
                     return "save";
                 }
-            };
+            },
+    IMPORT("import")
+            {
+                @Override
+                protected boolean executeCommand(List<String> args, UserThread userThread)
+                {
+                    if (args.size() == 2 && args.get(0).equals("-json"))
+                    {
+                        userThread.getCollection().loadFromJson(args.get(1));
+                        return true;
+                    }
+                    return false;
+                }
+
+                @Override
+                protected String getUsage() {
+                    return "import <file path>\n" +
+                            "import -json <collection>";
+                }
+            },
+    EXIT("exit")
+            {
+                @Override
+                protected boolean executeCommand(List<String> args, UserThread userThread) {
+                    if (args.size() == 0)
+                    {
+                        userThread.setConnectedStatus(false);
+                        return true;
+                    }
+                    return false;
+                }
+
+                @Override
+                protected String getUsage() {
+                    return "exit";
+                }
+            }
+            ;
 
     public static void execute(String input, UserThread userThread)
     {

@@ -14,7 +14,19 @@ public class Main
     {
         // Emergency saving
         Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> connectedUsers.forEach(x -> x.getCollection().saveToFile())));
+                () -> {
+                    System.out.println(connectedUsers.size());
+                    connectedUsers.forEach(x -> {
+                        x.sendln("The server is shutting down. Your work will be saved.");
+                        x.getCollection().saveToFile();
+                        x.setConnectedStatus(false);
+                        try {
+                            x.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }));
 
         int port = NetworkInfo.defaultPort;
         try

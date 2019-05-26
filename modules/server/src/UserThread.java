@@ -14,6 +14,7 @@ public class UserThread extends Thread
 {
     private Socket socket;
     private String alias;
+    private boolean connected = true;
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -27,6 +28,8 @@ public class UserThread extends Thread
         alias = socket.getInetAddress().toString();
 
         System.out.println("Established a connection with " + alias);
+
+        connected = setupDataStreams();
     }
 
     private boolean setupDataStreams()
@@ -47,7 +50,6 @@ public class UserThread extends Thread
 
     private void createAndInitialiseCollection()
     {
-        // Создание и загрузка коллекции
         collection = new CollectionHandler(this);
         collection.loadFromFile("backup.json");
     }
@@ -56,42 +58,46 @@ public class UserThread extends Thread
     @Override
     public void run()
     {
-        if (!setupDataStreams())
-            return;
-
         createAndInitialiseCollection();
 
-        while (true)
+        try
         {
-            try
+            while (connected)
             {
                 String input = in.readUTF();
                 System.out.println(alias + " > " + input);
 
                 Commands.execute(input, this);
             }
-            catch (SocketException e)
-            {
-                System.out.println("Connection with " + alias + " has been lost");
-                return;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                return;
-            }
         }
+        catch (SocketException e)
+        {
+            connected = false;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            connected = false;
+        }
+        finally
+        {
+            System.out.println("Connection with " + alias + " has been lost");
+        }
+
+        System.out.println("Saving the collection of user " + alias);
+        collection.saveToFile();
     }
 
     public void sendln(String message)
     {
-        try {
-            out.writeUTF(message);
-        }
-        catch (Exception e)
-        {
-            System.out.println("[ERROR] Error sending a message to " + alias);
-            e.printStackTrace();
+        if (connected) {
+            try {
+                out.writeUTF(message);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Error sending a message to " + alias);
+                e.printStackTrace();
+                connected = false;
+            }
         }
     }
 
@@ -99,6 +105,17 @@ public class UserThread extends Thread
     {
         return collection;
     }
+
+    public String getAlias()
+    {
+        return alias;
+    }
+
+    public void setConnectedStatus(boolean status)
+    {
+        connected = status;
+    }
+
     private static void addDebugElementsToCollection(CollectionHandler c)
     {
         c.addCharacter(new Character("WerDei", "The creator"));
