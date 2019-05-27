@@ -88,6 +88,12 @@ public final class Main
             attemptConnection(address, port);
 
             System.out.print(" .");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
 
         System.out.println(" connection established.");
