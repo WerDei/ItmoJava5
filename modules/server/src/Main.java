@@ -57,7 +57,7 @@ public class Main
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println("[ERROR] Error binding port: " + e.getMessage());
         }
     }
 }
