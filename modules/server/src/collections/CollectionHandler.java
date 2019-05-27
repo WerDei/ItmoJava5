@@ -16,8 +16,6 @@ import java.util.stream.Stream;
 
 public class CollectionHandler
 {
-    private UserThread userThread;
-
     private File file;
     private ConcurrentSkipListSet<Character> characters;
     private LocalDate creationDate;
@@ -26,10 +24,8 @@ public class CollectionHandler
     private LocalTime modificationTime;
 
 
-    public CollectionHandler(UserThread thread)
+    public CollectionHandler()
     {
-        userThread = thread;
-
         characters = new ConcurrentSkipListSet<>();
         creationTime = modificationTime = LocalTime.now();
         creationDate = modificationDate = LocalDate.now();
@@ -52,12 +48,12 @@ public class CollectionHandler
 
     // Modification
 
-    public void addCharacter(String json)
+    public void addCharacter(String json, UserThread userThread)
     {
-        addCharacter(getCharacterFromJson(json));
+        addCharacter(getCharacterFromJson(json), userThread);
     }
 
-    public void addCharacter(Character c)
+    public void addCharacter(Character c, UserThread userThread)
     {
         if(characters.add(c))
             collectionUpdated();
@@ -65,12 +61,12 @@ public class CollectionHandler
             userThread.sendln("Character with that name already exists");
     }
 
-    public void removeCharacter(String json)
+    public void removeCharacter(String json, UserThread userThread)
     {
-        removeCharacter(getCharacterFromJson(json));
+        removeCharacter(getCharacterFromJson(json), userThread);
     }
 
-    public void removeCharacter(Character c)
+    public void removeCharacter(Character c, UserThread userThread)
     {
         if(characters.remove(c))
             collectionUpdated();
@@ -81,7 +77,7 @@ public class CollectionHandler
 
     // Saving and loading
 
-    public void loadFromFile(String filePath)
+    public void loadFromFile(String filePath, UserThread userThread)
     {
         try
         {
@@ -107,7 +103,7 @@ public class CollectionHandler
         }
     }
 
-    public void loadFromJson(String json)
+    public void loadFromJson(String json, UserThread userThread)
     {
         try
         {
@@ -132,13 +128,13 @@ public class CollectionHandler
         characters.addAll(Arrays.asList(characterArray));
     }
 
-    public void saveToFile(String filePath)
+    public void saveToFile(String filePath, UserThread userThread)
     {
         file = new File(filePath);
-        saveToFile();
+        saveToFile(userThread);
     }
 
-    public void saveToFile()
+    public void saveToFile(UserThread userThread)
     {
         if (file == null)
             throw new RuntimeException("File is not initialised");
@@ -177,7 +173,7 @@ public class CollectionHandler
 
     // Printing information
 
-    public void printElements()
+    public void printElements(UserThread userThread)
     {
         userThread.sendln("Current collection elements:");
 
@@ -191,7 +187,7 @@ public class CollectionHandler
             userThread.sendln("(empty)");
     }
 
-    public void printInfo()
+    public void printInfo(UserThread userThread)
     {
         userThread.sendln("Element count: " + getLength());
         userThread.sendln("First population: " + creationDate + " " + creationTime);

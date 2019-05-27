@@ -1,6 +1,5 @@
 package net.werdei.talechars.server;
 
-import net.werdei.talechars.server.collections.Character;
 import net.werdei.talechars.server.collections.CollectionHandler;
 import net.werdei.talechars.server.collections.Commands;
 
@@ -22,7 +21,7 @@ public class UserThread extends Thread
     private CollectionHandler collection;
 
 
-    public UserThread(Socket s)
+    public UserThread(Socket s, CollectionHandler collectionHandler)
     {
         socket = s;
         alias = socket.getInetAddress().toString();
@@ -30,6 +29,8 @@ public class UserThread extends Thread
         System.out.println("Established a connection with " + alias);
 
         connected = setupDataStreams();
+
+        collection = collectionHandler;
     }
 
     private boolean setupDataStreams()
@@ -48,18 +49,9 @@ public class UserThread extends Thread
         }
     }
 
-    private void createAndInitialiseCollection()
-    {
-        collection = new CollectionHandler(this);
-        collection.loadFromFile("backup.json");
-    }
-
-
     @Override
     public void run()
     {
-        createAndInitialiseCollection();
-
         try
         {
             while (connected)
@@ -85,7 +77,7 @@ public class UserThread extends Thread
         }
 
         System.out.println("Saving the collection of user " + alias);
-        collection.saveToFile();
+        collection.saveToFile(this);
     }
 
     public void sendln(String message)
@@ -114,12 +106,5 @@ public class UserThread extends Thread
     public void setConnectedStatus(boolean status)
     {
         connected = status;
-    }
-
-    private static void addDebugElementsToCollection(CollectionHandler c)
-    {
-        c.addCharacter(new Character("WerDei", "The creator"));
-        c.addCharacter(new Character("Matt Mercer", "The best DM to ever DM", "God", "How do you want to do this?"));
-        c.addCharacter("{name = \"The user\"}");
     }
 }

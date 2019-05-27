@@ -44,7 +44,7 @@ public enum Commands {
                 @Override
                 protected boolean executeCommand(List<String> args, UserThread userThread) {
                     if (args.size() == 0) {
-                        userThread.getCollection().printInfo();
+                        userThread.getCollection().printInfo(userThread);
                         return true;
                     }
                     else return false;
@@ -60,7 +60,7 @@ public enum Commands {
                 @Override
                 protected boolean executeCommand(List<String> args, UserThread userThread) {
                     if (args.size() == 0) {
-                        userThread.getCollection().printElements();
+                        userThread.getCollection().printElements(userThread);
                         return true;
                     }
                     else if ((args.size() == 1) && (args.contains("-json")))
@@ -101,7 +101,7 @@ public enum Commands {
                 private void addElement(String json, UserThread userThread)
                 {
                     try {
-                        userThread.getCollection().addCharacter(json);
+                        userThread.getCollection().addCharacter(json, userThread);
                         userThread.sendln("Element successfully added");
                     }
                     catch (JsonSyntaxException | JsonCharacterNameNotGiven e)
@@ -131,7 +131,7 @@ public enum Commands {
                 private void removeElement(String json, UserThread userThread)
                 {
                     try {
-                        userThread.getCollection().removeCharacter(json);
+                        userThread.getCollection().removeCharacter(json, userThread);
                         userThread.sendln("Element removed successfully");
                     }
                     catch (JsonSyntaxException | JsonCharacterNameNotGiven e) {
@@ -148,9 +148,9 @@ public enum Commands {
             {
                 @Override
                 protected boolean executeCommand(List<String> args, UserThread userThread) {
-                    if (args.size() == 0)
+                    if (args.size() == 1)
                     {
-                        userThread.getCollection().loadFromFile("backup.json");
+                        userThread.getCollection().loadFromFile(args.get(0), userThread);
                         return true;
                     }
                     return false;
@@ -165,9 +165,9 @@ public enum Commands {
             {
                 @Override
                 protected boolean executeCommand(List<String> args, UserThread userThread) {
-                    if (args.size() == 0)
+                    if (args.size() == 1)
                     {
-                        userThread.getCollection().saveToFile();
+                        userThread.getCollection().saveToFile(args.get(0), userThread);
                         return true;
                     }
                     return false;
@@ -185,7 +185,7 @@ public enum Commands {
                 {
                     if (args.size() == 2 && args.get(0).equals("-json"))
                     {
-                        userThread.getCollection().loadFromJson(args.get(1));
+                        userThread.getCollection().loadFromJson(args.get(1), userThread);
                         return true;
                     }
                     return false;

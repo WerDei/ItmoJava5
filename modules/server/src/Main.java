@@ -1,6 +1,7 @@
 package net.werdei.talechars.server;
 
 import net.werdei.talechars.NetworkInfo;
+import net.werdei.talechars.server.collections.CollectionHandler;
 
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ public class Main
 {
     private static ServerSocket serverSocket;
     private static ArrayList<UserThread> connectedUsers;
+
+    private static CollectionHandler collectionHandler;
 
     public static void main(String[] args)
     {
@@ -41,6 +44,8 @@ public class Main
 
         connectedUsers = new ArrayList<>();
 
+        collectionHandler = new CollectionHandler();
+
         try
         {
             serverSocket = new ServerSocket(port);
@@ -50,7 +55,7 @@ public class Main
 
             while (true)
             {
-                UserThread userThread = new UserThread(serverSocket.accept());
+                UserThread userThread = new UserThread(serverSocket.accept(), collectionHandler);
                 connectedUsers.add(userThread);
                 userThread.start();
             }
