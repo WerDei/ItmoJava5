@@ -45,7 +45,7 @@ public class Main
         {
             serverSocket = new ServerSocket(port);
 
-            System.out.println("Successfully started the server");
+            System.out.println("Successfully started th server");
             System.out.println("Waiting for connections on port " + port);
 
             while (true)
