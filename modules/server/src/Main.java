@@ -12,12 +12,13 @@ public class Main
 
     public static void main(String[] args)
     {
-        // Emergency saving
+        /*
+        // Emergency saving. Commented because this pile of steaming shit doesn't work.
         Runtime.getRuntime().addShutdownHook(new Thread(
                 () -> {
                     System.out.println(connectedUsers.size());
                     connectedUsers.forEach(x -> {
-                        x.sendln("The server is shutting down. Your work will be saved.");
+                        x.sendln("The server is shutting down. Your work will now be saved.");
                         x.getCollection().saveToFile();
                         x.setConnectedStatus(false);
                         try {
@@ -27,6 +28,7 @@ public class Main
                         }
                     });
                 }));
+        */
 
         int port = NetworkInfo.defaultPort;
         try

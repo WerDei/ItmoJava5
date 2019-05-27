@@ -67,7 +67,10 @@ public class Character implements Comparable<Character>, Serializable
         // Formatting date of birth
         String birthDateString = birthDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
-        return name + nicknamesString + " - " + description + "; Birth date - " + birthDateString + "; " + location;
+        return name + nicknamesString + " - " + description +
+                "; Birth date - " + birthDateString +
+                "; Power - " + power +
+                "; Location - " + location;
     }
 
     public class Location

@@ -14,6 +14,7 @@ public final class Main
     // Networking
     private static Socket socket;
     private static boolean connectionEstablished = false;
+    public static boolean exitRequested = false;
 
     // Data
     private static DataOutputStream out;
@@ -60,7 +61,7 @@ public final class Main
 
             readInputAndSendToServer();
 
-            if (/* user wants to exit the program */ false)
+            if (exitRequested)
             {
                 break;
             }
@@ -122,8 +123,9 @@ public final class Main
         try
         {
             String line = reader.nextLine();
-            out.writeUTF(line);
-            System.out.println("Request sent");
+            line = ClientCommands.modifyMessageIfCommandEntered(line);
+            if (line != null)
+                out.writeUTF(line);
         }
         catch (SocketException e)
         {

@@ -127,9 +127,9 @@ public class CollectionHandler
     private void jsonImport(String json)
     {
         Gson gson = new Gson();
-        Character[] characterDummyArray = gson.fromJson(json, Character[].class);
+        Character[] characterArray = gson.fromJson(json, Character[].class);
 
-        characters.addAll(Arrays.asList(characterDummyArray));
+        characters.addAll(Arrays.asList(characterArray));
     }
 
     public void saveToFile(String filePath)

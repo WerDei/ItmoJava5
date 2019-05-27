@@ -1,9 +1,9 @@
 package net.werdei.talechars.server.collections;
 
 import com.google.gson.JsonSyntaxException;
+import net.werdei.talechars.CommandParser;
 import net.werdei.talechars.server.UserThread;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public enum Commands {
@@ -200,13 +200,10 @@ public enum Commands {
     EXIT("exit")
             {
                 @Override
-                protected boolean executeCommand(List<String> args, UserThread userThread) {
-                    if (args.size() == 0)
-                    {
-                        userThread.setConnectedStatus(false);
-                        return true;
-                    }
-                    return false;
+                protected boolean executeCommand(List<String> args, UserThread userThread)
+                {
+                    userThread.setConnectedStatus(false);
+                    return true;
                 }
 
                 @Override
@@ -218,14 +215,15 @@ public enum Commands {
 
     public static void execute(String input, UserThread userThread)
     {
-        List<String> args = parseInput(input);
+        List<String> args = CommandParser.parse(input);
         String command = args.get(0);
         args.remove(command);
 
         Commands c = findCommand(command);
         if (c != null)
         {
-            if (!c.executeCommand(args, userThread))
+            boolean usage = c.executeCommand(args, userThread);
+            if (!usage)
             {
                 userThread.sendln("Correct usage:");
                 userThread.sendln(c.getUsage());
@@ -234,7 +232,6 @@ public enum Commands {
         else
             userThread.sendln("Unknown command. Use \"help\" to see the list of commands");
     }
-
 
 
     protected String commandName;
@@ -252,27 +249,6 @@ public enum Commands {
             }
         }
         return null;
-    }
-
-    private static List<String> parseInput(String input)
-    {
-        ArrayList<String> parsedInput = new ArrayList<>();
-
-        String[] split = input.split(" ", 2); // Отделяем команду от потенциальных аргументов
-        parsedInput.add(split[0]);            // И добавляем первый элемент в коллекцию
-
-        while (split.length == 2 && split[1].startsWith("-"))
-        {
-            // Пока есть что-то ещё в вводе, и оно начинается с "-" (т.е. есть ещё аргументы)
-            // Мы отделяем их друг от друга и добавляем по одному в вывод. Повторяем, пока есть аргументы.
-            split = split[1].split(" ", 2);
-            parsedInput.add(split[0]);
-        }
-
-        if (split.length == 2)
-            parsedInput.add(split[1]); // Прибавляем, что осталось
-
-        return parsedInput;
     }
 
     //Should return False is the usage of the command is incorrect
