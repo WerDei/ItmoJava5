@@ -15,10 +15,11 @@ public class Main
 
     public static void main(String[] args)
     {
-
         // Emergency saving. Commented because this pile of steaming shit doesn't work.
-        Runtime.getRuntime().addShutdownHook(new Thread(
-                () ->  collectionHandler.saveToFile("backup.json", null)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->  {
+            System.out.println("Shutdown...");
+            collectionHandler.saveToFile("backup.json", null);
+        }));
 
 
         int port = NetworkInfo.defaultPort;

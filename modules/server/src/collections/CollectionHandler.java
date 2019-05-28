@@ -81,6 +81,8 @@ public class CollectionHandler
     {
         try
         {
+            characters.clear();
+
             file = new File(filePath);
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);

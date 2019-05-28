@@ -77,7 +77,7 @@ public class UserThread extends Thread
         }
 
         //System.out.println("Saving the collection of user " + alias);
-        //collection.saveToFile(this);
+        collection.saveToFile("backup.json",this);
     }
 
     public void sendln(String message)
