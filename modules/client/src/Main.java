@@ -2,12 +2,14 @@ package net.werdei.talechars.client;
 
 import net.werdei.talechars.NetworkInfo;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public final class Main
 {
@@ -15,6 +17,7 @@ public final class Main
     private static Socket socket;
     private static boolean connectionEstablished = false;
     public static boolean exitRequested = false;
+    public static String fileToSend = null;
 
     // Data
     private static DataOutputStream out;
@@ -60,6 +63,9 @@ public final class Main
                     break;
 
             readInputAndSendToServer();
+
+            if (fileToSend != null)
+                sendFileToServer();
 
             if (exitRequested)
             {
@@ -130,8 +136,10 @@ public final class Main
         {
             String line = reader.nextLine();
             line = ClientCommands.modifyMessageIfCommandEntered(line);
-            if (line != null)
+            if (line != null) {
+                System.out.println("Request sent");
                 out.writeUTF(line);
+            }
         }
         catch (SocketException e)
         {
@@ -142,6 +150,37 @@ public final class Main
         {
             e.printStackTrace();
         }
+    }
+
+    private static void sendFileToServer()
+    {
+        try
+        {
+            Thread.sleep(1000);
+
+            File file = new File(fileToSend);
+            long fileSize = file.length();
+            System.out.println("Sending file of size " + fileSize + " to a server now");
+
+            FileInputStream fis = new FileInputStream(file);
+
+            out.writeLong(fileSize);
+
+            Thread.sleep(1000);
+
+            byte[] buffer = new byte[NetworkInfo.fileSendBufferSize];
+
+            int length;
+            while ((length = fis.read(buffer)) != -1)
+            {
+                out.write(buffer, 0, length);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("[ERROR] Error sending file to server: " + e.getMessage());
+        }
+        fileToSend = null;
     }
 
     private static class MessageReadThread extends Thread

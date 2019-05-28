@@ -15,23 +15,11 @@ public class Main
 
     public static void main(String[] args)
     {
-        /*
+
         // Emergency saving. Commented because this pile of steaming shit doesn't work.
         Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> {
-                    System.out.println(connectedUsers.size());
-                    connectedUsers.forEach(x -> {
-                        x.sendln("The server is shutting down. Your work will now be saved.");
-                        x.getCollection().saveToFile();
-                        x.setConnectedStatus(false);
-                        try {
-                            x.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }));
-        */
+                () ->  collectionHandler.saveToFile("backup.json", null)));
+
 
         int port = NetworkInfo.defaultPort;
         try
@@ -50,7 +38,7 @@ public class Main
         {
             serverSocket = new ServerSocket(port);
 
-            System.out.println("Successfully started th server");
+            System.out.println("Successfully started the server");
             System.out.println("Waiting for connections on port " + port);
 
             while (true)

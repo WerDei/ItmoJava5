@@ -76,8 +76,8 @@ public class UserThread extends Thread
             System.out.println("Connection with " + alias + " has been lost");
         }
 
-        System.out.println("Saving the collection of user " + alias);
-        collection.saveToFile(this);
+        //System.out.println("Saving the collection of user " + alias);
+        //collection.saveToFile(this);
     }
 
     public void sendln(String message)
@@ -86,8 +86,7 @@ public class UserThread extends Thread
             try {
                 out.writeUTF(message);
             } catch (Exception e) {
-                System.out.println("[ERROR] Error sending a message to " + alias);
-                e.printStackTrace();
+                System.out.println("[ERROR] Error sending a message to " + alias + ": " + e.getMessage());
                 connected = false;
             }
         }
@@ -101,6 +100,21 @@ public class UserThread extends Thread
     public String getAlias()
     {
         return alias;
+    }
+
+    public Socket getSocket()
+    {
+        return socket;
+    }
+
+    public DataInputStream getInputStream()
+    {
+        return in;
+    }
+
+    public  DataOutputStream getOutputStream()
+    {
+        return out;
     }
 
     public void setConnectedStatus(boolean status)

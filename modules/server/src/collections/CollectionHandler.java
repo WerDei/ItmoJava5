@@ -153,11 +153,13 @@ public class CollectionHandler
 
             writer.close();
 
-            userThread.sendln("Collection successfully saved");
+            if (userThread != null)
+                userThread.sendln("Collection successfully saved");
         }
         catch (Exception e)
         {
-            userThread.sendln("Saving failed: " + e.getMessage());
+            if (userThread != null)
+                userThread.sendln("Saving failed: " + e.getMessage());
             System.out.println("Saving failed: " + e.getMessage());
         }
     }

@@ -2,8 +2,10 @@ package net.werdei.talechars.server.collections;
 
 import com.google.gson.JsonSyntaxException;
 import net.werdei.talechars.CommandParser;
+import net.werdei.talechars.NetworkInfo;
 import net.werdei.talechars.server.UserThread;
 
+import java.io.*;
 import java.util.List;
 
 public enum Commands {
@@ -183,9 +185,40 @@ public enum Commands {
                 @Override
                 protected boolean executeCommand(List<String> args, UserThread userThread)
                 {
-                    if (args.size() == 2 && args.get(0).equals("-json"))
+                    if (args.size() == 2 && args.get(0).equals("-await"))
                     {
-                        userThread.getCollection().loadFromJson(args.get(1), userThread);
+                        try
+                        {
+                            File file = new File(args.get(1));
+
+                            while (!file.createNewFile()) {
+                                file = new File("_" + file.getName());
+                            }
+
+                            DataInputStream in = userThread.getInputStream();
+                            long size = in.readLong();
+
+                            byte[] buffer = new byte[NetworkInfo.fileSendBufferSize];
+
+                            BufferedInputStream bis = new BufferedInputStream(in);
+                            FileOutputStream fos = new FileOutputStream(file);
+
+                            System.out.println("Waiting for file of size " + size + " now");
+
+                            int length;
+                            while (size > 0) {
+                                length = bis.read(buffer);
+                                fos.write(buffer, 0, length);
+                                size -= length;
+                            }
+                            System.out.println("File " + file.getName() + " successfully imported");
+                            userThread.sendln("File " + file.getName() + " successfully imported");
+
+                            fos.close();
+
+                        } catch (Exception e) {
+                            userThread.sendln("Error accepting file: " + e.getMessage());
+                        }
                         return true;
                     }
                     return false;
@@ -193,8 +226,7 @@ public enum Commands {
 
                 @Override
                 protected String getUsage() {
-                    return "import <file path>\n" +
-                            "import -json <collection>";
+                    return "import <file path>";
                 }
             },
     EXIT("exit")

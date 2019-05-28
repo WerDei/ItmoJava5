@@ -19,15 +19,16 @@ public enum ClientCommands {
                         try
                         {
                             File file = new File(args.get(0));
-                            FileReader fileReader = new FileReader(file);
-                            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-                            String line;
-                            String jsonString = "";
-                            while ((line = bufferedReader.readLine()) != null)
-                                jsonString += line;
-
-                            return "import -json " + jsonString;
+                            if (file.exists())
+                            {
+                                Main.fileToSend = args.get(0);
+                                return "import -await " + file.getName();
+                            }
+                            else
+                            {
+                                System.out.println("File doesn't exist");
+                                return null;
+                            }
                         }
                         catch (Exception e)
                         {
