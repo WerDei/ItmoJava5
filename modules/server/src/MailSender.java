@@ -49,7 +49,7 @@ public class MailSender {
             //Отправляем сообщение
             Transport.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при отправке сообщения на почту.");
         }
         return generatedPassword;
     }
