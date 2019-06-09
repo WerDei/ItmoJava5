@@ -12,6 +12,7 @@ public class Character implements Comparable<Character>, Serializable
     private int power;
     private Location location;
     private LocalDate birthDate;
+    private String owner;
 
     public Character(String name)
     {
@@ -19,11 +20,12 @@ public class Character implements Comparable<Character>, Serializable
         initAfterJson();
     }
 
-    public Character(String name, String description, String... nicknames)
+    public Character(String name, String description, String owner, String... nicknames)
     {
         this.name = name;
         this.nicknames = nicknames;
         this.description = description;
+        this.owner = owner;
         initAfterJson();
     }
 
@@ -71,6 +73,25 @@ public class Character implements Comparable<Character>, Serializable
                 "; Birth date - " + birthDateString +
                 "; Power - " + power +
                 "; Location - " + location;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+    public String getDescription(){
+        return this.description;
+    }
+    public int getPower(){
+        return this.power;
+    }
+    public String getLocation(){
+        return this.location.toString();
+    }
+     //public String getDate(){
+     //  return ......
+     //}
+    public String getOwner(){
+        return this.owner;
     }
 
     public class Location
