@@ -105,11 +105,12 @@ public enum Commands {
                 {
                     try {
                         Character c = CollectionHandler.getCharacterFromJson(json);
+                        c.setOwner(userThread.getAlias()); // Присвоение хозяина
 
                         userThread.getCollection().addCharacter(c, userThread);
                         DBManager.insertCharacter(c);
 
-                        userThread.sendln("Element successfully added");
+                        userThread.sendln("Element added successfully");
                     }
                     catch (JsonSyntaxException | JsonCharacterParseException e)
                     {
@@ -139,11 +140,15 @@ public enum Commands {
                 {
                     try {
                         Character c = CollectionHandler.getCharacterFromJson(json);
+                        if (c.getOwner().equals(userThread.getAlias())) // Проверка на хозяина
+                        {
+                            userThread.getCollection().removeCharacter(json, userThread);
+                            DBManager.deleteCharacter(c);
 
-                        userThread.getCollection().removeCharacter(json, userThread);
-                        DBManager.deleteCharacter(c);
-
-                        userThread.sendln("Element removed successfully");
+                            userThread.sendln("Element removed successfully");
+                        }
+                        else
+                            userThread.sendln("This element does not belong to you");
                     }
                     catch (JsonSyntaxException | JsonCharacterParseException e) {
                         userThread.sendln("Incorrect JSON syntax: " + e.getMessage());
