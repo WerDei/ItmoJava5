@@ -1,17 +1,16 @@
 package net.werdei.talechars.server.collections;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Character implements Comparable<Character>, Serializable
 {
     private String name;
-    private String[] nicknames;
     private String description;
     private int power;
     private Location location;
-    private LocalDate birthDate;
+    private OffsetDateTime creationMoment;
     private String owner;
 
     public Character(String name)
@@ -20,19 +19,40 @@ public class Character implements Comparable<Character>, Serializable
         initAfterJson();
     }
 
-    public Character(String name, String description, String owner, String... nicknames)
+    public Character(String name, String description, int power,
+                     Location location, OffsetDateTime creationMoment, String owner)
     {
         this.name = name;
-        this.nicknames = nicknames;
         this.description = description;
+        this.power = power;
+        this.location = location;
+        this.creationMoment = creationMoment;
         this.owner = owner;
-        initAfterJson();
+    }
+
+    // Вызывает предедущий конструктор, но принимает строковые переменные вместо
+    // локации и времени\даты
+
+
+    public Character(String name, String description, int power,
+                     String spacedLocation, String creationString, String owner)
+    {
+        this(
+                name,
+                description,
+                power,
+                new Location(spacedLocation),
+                OffsetDateTime.parse(creationString),
+                owner);
     }
 
     public void initAfterJson()
     {
         if (name == null)
-            throw new JsonCharacterNameNotGiven("Variable \"name\" is required");
+            throw new JsonCharacterParseException("Variable \"name\" is required");
+
+        if (owner != null)
+            owner = null;
 
         if (description == null)
             description = "A character";
@@ -40,8 +60,8 @@ public class Character implements Comparable<Character>, Serializable
         if (location == null)
             location = new Location(0, 100, 0);
 
-        if (birthDate == null)
-            birthDate = LocalDate.now();
+        if (creationMoment == null)
+            creationMoment = OffsetDateTime.now();
     }
 
 
@@ -54,47 +74,46 @@ public class Character implements Comparable<Character>, Serializable
     @Override
     public String toString()
     {
-        // creating a pretty formatted list of nicknames if there are any
-        String nicknamesString = "";
-        if (nicknames != null && nicknames.length > 0)
-        {
-            nicknamesString += " (";
-            for (int i = 0; i < nicknames.length; i++)
-            {
-                nicknamesString += nicknames[i];
-                nicknamesString += i == nicknames.length - 1 ? ")" : "; ";
-            }
-        }
-
         // Formatting date of birth
-        String birthDateString = birthDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        String creationMomentString = creationMoment.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
-        return name + nicknamesString + " - " + description +
-                "; Birth date - " + birthDateString +
+        return name + " - " + description +
+                "; Birth date - " + creationMomentString +
                 "; Power - " + power +
                 "; Location - " + location;
     }
 
+
     public String getName(){
         return this.name;
     }
+
     public String getDescription(){
         return this.description;
     }
+
     public int getPower(){
         return this.power;
     }
+
     public String getLocation(){
         return this.location.toString();
     }
-     //public String getDate(){
-     //  return ......
-     //}
+
+    public OffsetDateTime getCreationMoment(){
+        return creationMoment;
+    }
+
     public String getOwner(){
         return this.owner;
     }
+    public void setOwner(String owner)
+    {
+        this.owner = owner;
+    }
 
-    public class Location
+
+    public static class Location
     {
         public float x;
         public float y;
@@ -107,9 +126,22 @@ public class Character implements Comparable<Character>, Serializable
             this.z = z;
         }
 
+        public Location(String spacedLocation)
+        {
+            String[] nums = spacedLocation.split(" ");
+            this.x = Float.parseFloat(nums[0]);
+            this.y = Float.parseFloat(nums[1]);
+            this.z = Float.parseFloat(nums[2]);
+        }
+
         @Override
         public String toString() {
             return String.format("[%.1f; %.1f; %.1f]", x, y, z);
+        }
+
+        public String toSpacedString()
+        {
+            return String.format("%.1f %.1f %.1f", x, y, z);
         }
     }
 }

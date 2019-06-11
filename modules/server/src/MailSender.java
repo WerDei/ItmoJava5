@@ -20,11 +20,14 @@ public class MailSender {
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
     }
+
     //Метод отправит сгенерированный пароль на указанну почту, возвращает сгенерированный пароль в виде строки.
-    public String sendPassword(String toEmail){
+    public String sendPassword(String toEmail)
+    {
         // Генерация пароля
-        String generatedPassword = new Random().ints(10, 33, 122).collect(StringBuilder::new,
-                StringBuilder::appendCodePoint, StringBuilder::append)
+        String generatedPassword = new Random()
+                .ints(10, 33, 122)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
         Session session = Session.getInstance(props, new Authenticator() {
@@ -33,7 +36,8 @@ public class MailSender {
             }
         });
 
-        try {
+        try
+        {
             Message message = new MimeMessage(session);
             //от кого
             message.setFrom(new InternetAddress(username));
@@ -43,14 +47,17 @@ public class MailSender {
             message.setSubject("Регистрация в сервисе 'Седьмая лаба по проге'");
             //Содержимое
             message.setText("Благодарим за регистрацию в нашем сервисе!\n" +
-                    "Пароль от вашего аккаунта: " +generatedPassword +
+                    "Пароль от вашего аккаунта: " + generatedPassword +
                     "\nНе теряйте ваш пароль, не передавайте его другим блаблабла.");
 
             //Отправляем сообщение
             Transport.send(message);
-        } catch (MessagingException e) {
+        }
+        catch (MessagingException e)
+        {
             System.out.println("Ошибка при отправке сообщения на почту.");
         }
+
         return generatedPassword;
     }
 }

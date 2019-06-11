@@ -106,7 +106,7 @@ public enum Commands {
                         userThread.getCollection().addCharacter(json, userThread);
                         userThread.sendln("Element successfully added");
                     }
-                    catch (JsonSyntaxException | JsonCharacterNameNotGiven e)
+                    catch (JsonSyntaxException | JsonCharacterParseException e)
                     {
                         userThread.sendln("Incorrect JSON syntax: " + e.getMessage());
                     }
@@ -136,7 +136,7 @@ public enum Commands {
                         userThread.getCollection().removeCharacter(json, userThread);
                         userThread.sendln("Element removed successfully");
                     }
-                    catch (JsonSyntaxException | JsonCharacterNameNotGiven e) {
+                    catch (JsonSyntaxException | JsonCharacterParseException e) {
                         userThread.sendln("Incorrect JSON syntax: " + e.getMessage());
                     }
                 }
