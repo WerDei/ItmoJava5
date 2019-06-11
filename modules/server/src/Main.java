@@ -5,7 +5,6 @@ import net.werdei.talechars.server.auth.LoginUserThread;
 import net.werdei.talechars.server.collections.CollectionHandler;
 
 import java.net.ServerSocket;
-import java.util.ArrayList;
 
 public class Main
 {

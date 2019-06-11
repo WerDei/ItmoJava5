@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public class CollectionHandler
 {
     private File file;
-    private ConcurrentSkipListSet<Character> characters;
+    public ConcurrentSkipListSet<Character> characters;
     private LocalDate creationDate;
     private LocalTime creationTime;
     private LocalDate modificationDate;
@@ -110,6 +110,7 @@ public class CollectionHandler
     {
         try
         {
+
             jsonImport(json);
 
             creationDate = LocalDate.now();

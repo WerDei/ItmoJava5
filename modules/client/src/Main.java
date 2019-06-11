@@ -2,14 +2,14 @@ package net.werdei.talechars.client;
 
 import net.werdei.talechars.NetworkInfo;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 public final class Main
 {

@@ -2,11 +2,9 @@ package net.werdei.talechars.server.collections;
 
 import com.google.gson.JsonSyntaxException;
 import net.werdei.talechars.CommandParser;
-import net.werdei.talechars.NetworkInfo;
 import net.werdei.talechars.server.DBManager;
 import net.werdei.talechars.server.UserThread;
 
-import java.io.*;
 import java.util.List;
 
 public enum Commands {
@@ -17,6 +15,7 @@ public enum Commands {
                 {
                     if (args.size() == 0)
                     {
+
                         userThread.sendln("There are " + Commands.values().length + " available commands:");
 
                         for (Commands c : Commands.values())

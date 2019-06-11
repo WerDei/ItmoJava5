@@ -4,9 +4,7 @@ import net.werdei.talechars.server.auth.PasswordHasher;
 import net.werdei.talechars.server.collections.Character;
 
 import java.sql.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class DBManager {
 
@@ -55,13 +53,8 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
-                PreparedStatement stmt = con.prepareStatement("DELETE FROM Characters7 WHERE name = ? AND description = ? AND power = ? AND location = ? AND creation_moment = ? AND owner = ?");
+                PreparedStatement stmt = con.prepareStatement("DELETE FROM Characters7 WHERE name = ?");
                 stmt.setString(1, character.getName());
-                stmt.setString(2, character.getDescription());
-                stmt.setInt(3, character.getPower());
-                stmt.setString(4, character.getSpacedLocation());
-                stmt.setString(5, character.getCreationMoment().toString());
-                stmt.setString(6, character.getOwner());
                 stmt.executeUpdate();
                 stmt.close();
             } finally {
@@ -82,7 +75,6 @@ public class DBManager {
                     System.out.println("Пользователь уже существует");
                 else {
                     String passwordHash = PasswordHasher.hash(password);
-
                     PreparedStatement stmt = con.prepareStatement("INSERT INTO Users (username, password) VALUES (?, ?)");
                     stmt.setString(1, username);
                     stmt.setString(2, passwordHash);
@@ -105,9 +97,10 @@ public class DBManager {
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
                 String passwordHash = PasswordHasher.hash(password);
-
-                Statement stmt = con.createStatement();
-                ResultSet result = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + username + "' AND password = '" + passwordHash + "'");
+                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Users WHERE username = ? AND password = ?");
+                stmt.setString(1, username);
+                stmt.setString(2, passwordHash);
+                ResultSet result = stmt.executeQuery();
                 check = result.next();
                 result.close();
                 stmt.close();
@@ -142,17 +135,12 @@ public class DBManager {
     }
 
     public static ArrayList<Character> receiveCollection() {
-
         ArrayList<Character> collection = new ArrayList<>();
 
-        try
-        {
-
+        try {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
-
-            try
-            {
+            try {
                 Statement stmt = con.createStatement();
                 ResultSet result = stmt.executeQuery("SELECT * FROM Characters7");
                 while (result.next())
@@ -170,8 +158,7 @@ public class DBManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return collection;
+    return collection;
     }
 }
 
