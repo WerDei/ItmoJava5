@@ -1,5 +1,6 @@
 package net.werdei.talechars.server;
 
+import net.werdei.talechars.server.auth.PasswordHasher;
 import net.werdei.talechars.server.collections.Character;
 
 import java.sql.*;
@@ -76,15 +77,14 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
-                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Users WHERE username = ? AND password = ?");
-                stmt.setString(1, username);
-                stmt.setString(2, password);
-                ResultSet result = stmt.executeQuery();
-                if (result.next()) System.out.println("Пользователь уже существует");
+                if (checkIfUserExists(username))
+                    System.out.println("Пользователь уже существует");
                 else {
-                    stmt = con.prepareStatement("INSERT INTO Users (username, password) VALUES (?, ?)");
+                    String passwordHash = PasswordHasher.hash(password);
+
+                    PreparedStatement stmt = con.prepareStatement("INSERT INTO Users (username, password) VALUES (?, ?)");
                     stmt.setString(1, username);
-                    stmt.setString(2, password);
+                    stmt.setString(2, passwordHash);
                     stmt.executeUpdate();
                     stmt.close();
                 }
@@ -103,8 +103,10 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
+                String passwordHash = PasswordHasher.hash(password);
+
                 Statement stmt = con.createStatement();
-                ResultSet result = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + username + "' AND password = '" + password + "'");
+                ResultSet result = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + username + "' AND password = '" + passwordHash + "'");
                 check = result.next();
                 result.close();
                 stmt.close();
