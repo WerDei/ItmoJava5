@@ -201,7 +201,7 @@ public class CollectionHandler
 
     // Utility
 
-    private Character getCharacterFromJson(String json)
+    public static Character getCharacterFromJson(String json)
     {
         Gson gson = new Gson();
         Character c = gson.fromJson(json, Character.class);

@@ -8,9 +8,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class LoginUserThread extends Thread {
-
-
+public class LoginUserThread extends Thread
+{
     private Socket socket;
     private String alias;
     private boolean connected;

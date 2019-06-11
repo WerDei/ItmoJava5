@@ -3,6 +3,7 @@ package net.werdei.talechars.server.collections;
 import com.google.gson.JsonSyntaxException;
 import net.werdei.talechars.CommandParser;
 import net.werdei.talechars.NetworkInfo;
+import net.werdei.talechars.server.DBManager;
 import net.werdei.talechars.server.UserThread;
 
 import java.io.*;
@@ -103,7 +104,11 @@ public enum Commands {
                 private void addElement(String json, UserThread userThread)
                 {
                     try {
-                        userThread.getCollection().addCharacter(json, userThread);
+                        Character c = CollectionHandler.getCharacterFromJson(json);
+
+                        userThread.getCollection().addCharacter(c, userThread);
+                        DBManager.insertCharacter(c);
+
                         userThread.sendln("Element successfully added");
                     }
                     catch (JsonSyntaxException | JsonCharacterParseException e)
@@ -133,7 +138,11 @@ public enum Commands {
                 private void removeElement(String json, UserThread userThread)
                 {
                     try {
+                        Character c = CollectionHandler.getCharacterFromJson(json);
+
                         userThread.getCollection().removeCharacter(json, userThread);
+                        DBManager.deleteCharacter(c);
+
                         userThread.sendln("Element removed successfully");
                     }
                     catch (JsonSyntaxException | JsonCharacterParseException e) {
