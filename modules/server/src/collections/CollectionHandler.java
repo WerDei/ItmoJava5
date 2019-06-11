@@ -2,6 +2,7 @@ package net.werdei.talechars.server.collections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.werdei.talechars.server.DBManager;
 import net.werdei.talechars.server.UserThread;
 
 import java.io.BufferedReader;
@@ -120,6 +121,11 @@ public class CollectionHandler
         {
             userThread.sendln("Importing failed: " + e.getMessage());
         }
+    }
+
+    public void loadFromDB()
+    {
+        characters.addAll(DBManager.receiveCollection());
     }
 
     private void jsonImport(String json)

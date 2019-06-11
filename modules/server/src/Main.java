@@ -32,6 +32,7 @@ public class Main
         }
 
         collectionHandler = new CollectionHandler();
+        collectionHandler.loadFromDB();
 
         try
         {

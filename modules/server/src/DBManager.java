@@ -5,6 +5,7 @@ import net.werdei.talechars.server.collections.Character;
 
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class DBManager {
@@ -140,11 +141,18 @@ public class DBManager {
         return check;
     }
 
-    public static Collection<Character> receiveCollection(Collection<Character> collection) {
-        try {
+    public static ArrayList<Character> receiveCollection() {
+
+        ArrayList<Character> collection = new ArrayList<>();
+
+        try
+        {
+
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
-            try {
+
+            try
+            {
                 Statement stmt = con.createStatement();
                 ResultSet result = stmt.executeQuery("SELECT * FROM Characters7");
                 while (result.next())
@@ -162,7 +170,8 @@ public class DBManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    return collection;
+
+        return collection;
     }
 }
 
