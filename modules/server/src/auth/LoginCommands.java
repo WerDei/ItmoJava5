@@ -8,6 +8,7 @@ import net.werdei.talechars.server.UserThread;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public enum LoginCommands {
     HELP("help")
@@ -51,7 +52,11 @@ public enum LoginCommands {
                     {
                         String login = args.get(0);
 
-                        if (!DBManager.checkIfUserExists(login))
+                        if (!EMAIL_PATTERN.matcher(login).matches())
+                        {
+                            userThread.sendln("Please enter a valid email address");
+                        }
+                        else if (!DBManager.checkIfUserExists(login))
                         {
                             MailSender mail = new MailSender();
                             String password = mail.sendPassword(login);
@@ -82,6 +87,10 @@ public enum LoginCommands {
                         String login = args.get(0);
                         String password = args.get(1);
 
+                        if (!EMAIL_PATTERN.matcher(login).matches())
+                        {
+                            userThread.sendln("Please enter a valid email address");
+                        }
                         if (DBManager.checkSignIn(login, password))
                             userThread.setLogin(login);
                         else
@@ -133,6 +142,7 @@ public enum LoginCommands {
             userThread.sendln("Please log in to the system. Use \"help\" to get available commands");
     }
 
+    public static final Pattern EMAIL_PATTERN = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
 
     protected String commandName;
 
