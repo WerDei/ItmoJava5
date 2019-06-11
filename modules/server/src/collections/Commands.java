@@ -146,6 +146,7 @@ public enum Commands {
                     return "remove <element>";
                 }
             },
+/*
     LOAD("load")
             {
                 @Override
@@ -229,6 +230,8 @@ public enum Commands {
                     return "import <file path>";
                 }
             },
+
+ */
     EXIT("exit")
             {
                 @Override

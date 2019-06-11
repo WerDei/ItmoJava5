@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.util.List;
 
 public enum ClientCommands {
-
+/*
     IMPORT("import")
             {
                 @Override
@@ -39,6 +39,7 @@ public enum ClientCommands {
                     return originalInput;
                 }
             },
+ */
     EXIT("exit")
             {
                 @Override
