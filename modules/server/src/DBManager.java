@@ -24,16 +24,17 @@ public class DBManager {
                 stmt.setString(2, character.getDescription());
                 stmt.setInt(3, character.getPower());
                 stmt.setString(4, character.getSpacedLocation());
-                stmt.setString(5, character.getCreationMoment().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                stmt.setString(5, character.getCreationMoment().toString());
                 ResultSet result = stmt.executeQuery();
-                if (result.next()) System.out.println("Объект уже существует");
+                if (result.next())
+                    System.out.println("Объект уже существует");
                 else {
                     stmt = con.prepareStatement("INSERT INTO Characters7 (name, description, power, location, creation_moment, owner) VALUES (?, ?, ?, ?, ?, ?)");
                     stmt.setString(1, character.getName());
                     stmt.setString(2, character.getDescription());
                     stmt.setInt(3, character.getPower());
                     stmt.setString(4, character.getSpacedLocation());
-                    stmt.setString(5, character.getCreationMoment().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                    stmt.setString(5, character.getCreationMoment().toString());
                     stmt.setString(6, character.getOwner());
                     stmt.executeUpdate();
                 }
@@ -57,7 +58,7 @@ public class DBManager {
                 stmt.setString(2, character.getDescription());
                 stmt.setInt(3, character.getPower());
                 stmt.setString(4, character.getSpacedLocation());
-                stmt.setString(5, character.getCreationMoment().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                stmt.setString(5, character.getCreationMoment().toString());
                 stmt.setString(6, character.getOwner());
                 stmt.executeUpdate();
                 stmt.close();
@@ -145,7 +146,13 @@ public class DBManager {
                 Statement stmt = con.createStatement();
                 ResultSet result = stmt.executeQuery("SELECT * FROM Characters7");
                 while (result.next())
-                    collection.add(new Character(result.getString(1),result.getString(2), result.getInt(3), result.getString(4), result.getString(5), result.getString(6)));
+                    collection.add(new Character(
+                            result.getString(1),
+                            result.getString(2),
+                            result.getInt(3),
+                            result.getString(4),
+                            result.getString(5),
+                            result.getString(6)));
                 stmt.close();
             } finally {
                 con.close();

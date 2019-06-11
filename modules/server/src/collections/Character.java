@@ -50,7 +50,7 @@ public class Character implements Comparable<Character>, Serializable
             throw new JsonCharacterParseException("Variable \"name\" is required");
 
         if (owner != null)
-            owner = null;
+            throw new JsonCharacterParseException("Variable \"owner\" should not be assigned manually");
 
         if (description == null)
             description = "A character";
@@ -142,7 +142,7 @@ public class Character implements Comparable<Character>, Serializable
 
         public String toSpacedString()
         {
-            return String.format("%.1f %.1f %.1f", x, y, z);
+            return String.format(x + " " + y + " " + z);
         }
     }
 }
