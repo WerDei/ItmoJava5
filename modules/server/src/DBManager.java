@@ -1,7 +1,10 @@
 package net.werdei.talechars.server;
 
 import net.werdei.talechars.server.collections.Character;
+
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 
 public class DBManager {
 
@@ -16,21 +19,22 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
-                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Lab7Characters WHERE name = ? AND description = ? AND power = ? AND location = ? AND owner = ?");
+                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Characters7 WHERE name = ? AND description = ? AND power = ? AND location = ? AND creation_moment = ?");
                 stmt.setString(1, character.getName());
                 stmt.setString(2, character.getDescription());
                 stmt.setInt(3, character.getPower());
-                stmt.setString(4, character.getLocation());
-                stmt.setString(5, character.getOwner());
+                stmt.setString(4, character.getSpacedLocation());
+                stmt.setString(5, character.getCreationMoment().format(DateTimeFormatter.ISO_LOCAL_DATE));
                 ResultSet result = stmt.executeQuery();
                 if (result.next()) System.out.println("Объект уже существует");
                 else {
-                    stmt = con.prepareStatement("INSERT INTO Lab7Characters (name, description, power, location, owner) VALUES (?, ?, ?, ?, ?)");
+                    stmt = con.prepareStatement("INSERT INTO Characters7 (name, description, power, location, creation_moment, owner) VALUES (?, ?, ?, ?, ?, ?)");
                     stmt.setString(1, character.getName());
                     stmt.setString(2, character.getDescription());
                     stmt.setInt(3, character.getPower());
-                    stmt.setString(4, character.getLocation());
-                    stmt.setString(5, character.getOwner());
+                    stmt.setString(4, character.getSpacedLocation());
+                    stmt.setString(5, character.getCreationMoment().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                    stmt.setString(6, character.getOwner());
                     stmt.executeUpdate();
                 }
                 stmt.close();
@@ -48,12 +52,13 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
-                PreparedStatement stmt = con.prepareStatement("DELETE FROM Lab7Characters WHERE name = ? AND description = ? AND power = ? AND location = ? AND owner = ?");
+                PreparedStatement stmt = con.prepareStatement("DELETE FROM Characters7 WHERE name = ? AND description = ? AND power = ? AND location = ? AND creation_moment = ? AND owner = ?");
                 stmt.setString(1, character.getName());
                 stmt.setString(2, character.getDescription());
                 stmt.setInt(3, character.getPower());
-                stmt.setString(4, character.getLocation());
-                stmt.setString(5, character.getOwner());
+                stmt.setString(4, character.getSpacedLocation());
+                stmt.setString(5, character.getCreationMoment().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                stmt.setString(6, character.getOwner());
                 stmt.executeUpdate();
                 stmt.close();
             } finally {
@@ -130,6 +135,25 @@ public class DBManager {
             e.printStackTrace();
         }
         return check;
+    }
+
+    public static Collection<Character> receiveCollection(Collection<Character> collection) {
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
+            try {
+                Statement stmt = con.createStatement();
+                ResultSet result = stmt.executeQuery("SELECT * FROM Characters7");
+                while (result.next())
+                    collection.add(new Character(result.getString(1),result.getString(2), result.getInt(3), result.getString(4), result.getString(5), result.getString(6)));
+                stmt.close();
+            } finally {
+                con.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    return collection;
     }
 }
 

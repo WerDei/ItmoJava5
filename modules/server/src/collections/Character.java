@@ -97,6 +97,9 @@ public class Character implements Comparable<Character>, Serializable
     public String getLocation(){
         return this.location.toString();
     }
+    public String getSpacedLocation(){
+        return this.location.toSpacedString();
+    }
 
     public OffsetDateTime getCreationMoment(){
         return creationMoment;
