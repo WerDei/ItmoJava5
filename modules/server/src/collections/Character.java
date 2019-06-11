@@ -32,8 +32,6 @@ public class Character implements Comparable<Character>, Serializable
 
     // Вызывает предедущий конструктор, но принимает строковые переменные вместо
     // локации и времени\даты
-
-
     public Character(String name, String description, int power,
                      String spacedLocation, String creationString, String owner)
     {

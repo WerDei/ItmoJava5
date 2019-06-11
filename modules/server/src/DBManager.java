@@ -1,50 +1,52 @@
 package net.werdei.talechars.server;
-import net.werdei.talechars.server.collections.Character;
 
+import net.werdei.talechars.server.collections.Character;
 import java.sql.*;
+
 public class DBManager {
 
-        //Данные значения для моей локальной PostgreSQL БД, их надо заменить на закоменченные при заливе на helios.
-        private String url = "jdbc:postgresql://localhost:5432/studs"; //"jdbc:postgresql://pg:5432/studs"
-        private String login = "postgres";  // Helios login
-        private String password = "postgres"; // Helios password
+    //Данные значения для моей локальной PostgreSQL БД, их надо заменить на закоменченные при заливе на helios.
+    private static final String DBURL = "jdbc:postgresql://localhost:5432/studs"; //"jdbc:postgresql://pg:5432/studs"
+    private static final String DBLOGIN = "postgres";  // Helios login
+    private static final String DBPASSWORD = "postgres"; // Helios password
 
-        // Вставляет персонажа в БД.
-        public void insertCharacter(Character character) {
+    // Вставляет персонажа в БД.
+    public static void insertCharacter(Character character) {
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
-                Class.forName("org.postgresql.Driver");
-                Connection con = DriverManager.getConnection(url, login, password);
-                try {
-                    PreparedStatement stmt = con.prepareStatement("SELECT * FROM Lab7Characters WHERE name = ? AND description = ? AND power = ? AND location = ? AND owner = ?");
+                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Lab7Characters WHERE name = ? AND description = ? AND power = ? AND location = ? AND owner = ?");
+                stmt.setString(1, character.getName());
+                stmt.setString(2, character.getDescription());
+                stmt.setInt(3, character.getPower());
+                stmt.setString(4, character.getLocation());
+                stmt.setString(5, character.getOwner());
+                ResultSet result = stmt.executeQuery();
+                if (result.next()) System.out.println("Объект уже существует");
+                else {
+                    stmt = con.prepareStatement("INSERT INTO Lab7Characters (name, description, power, location, owner) VALUES (?, ?, ?, ?, ?)");
                     stmt.setString(1, character.getName());
                     stmt.setString(2, character.getDescription());
                     stmt.setInt(3, character.getPower());
                     stmt.setString(4, character.getLocation());
                     stmt.setString(5, character.getOwner());
-                    ResultSet result = stmt.executeQuery();
-                    if (result.next()) System.out.println("Объект уже существует");
-                    else {
-                        stmt = con.prepareStatement("INSERT INTO Lab7Characters (name, description, power, location, owner) VALUES (?, ?, ?, ?, ?)");
-                        stmt.setString(1, character.getName());
-                        stmt.setString(2, character.getDescription());
-                        stmt.setInt(3, character.getPower());
-                        stmt.setString(4, character.getLocation());
-                        stmt.setString(5, character.getOwner());
-                        stmt.executeUpdate();
-                    }
-                    stmt.close();
-                } finally {
-                    con.close();
+                    stmt.executeUpdate();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                stmt.close();
+            } finally {
+                con.close();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
     // Удаляет персонажа из БД.
-    public void deleteCharacter(Character character) {
+    public static void deleteCharacter(Character character) {
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection(url, login, password);
+            Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
                 PreparedStatement stmt = con.prepareStatement("DELETE FROM Lab7Characters WHERE name = ? AND description = ? AND power = ? AND location = ? AND owner = ?");
                 stmt.setString(1, character.getName());
@@ -63,10 +65,10 @@ public class DBManager {
     }
 
     // Вставляет пользователя с паролем в БД.
-    public void insertUser(String username, String password) {
+    public static void insertUser(String username, String password) {
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection(url, login, this.password);
+            Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
                 PreparedStatement stmt = con.prepareStatement("SELECT * FROM Users WHERE username = ? AND password = ?");
                 stmt.setString(1, username);
@@ -89,14 +91,14 @@ public class DBManager {
     }
 
     //Проверяет, есть ли в БД такие username и password.
-    public boolean checkSignIn(String username, String password) {
-            boolean check = false;
+    public static boolean checkSignIn(String username, String password) {
+        boolean check = false;
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection(url, login, this.password);
+            Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
                 Statement stmt = con.createStatement();
-                ResultSet result = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + username + "' AND password = '" + password +"'");
+                ResultSet result = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + username + "' AND password = '" + password + "'");
                 check = result.next();
                 result.close();
                 stmt.close();
@@ -110,11 +112,11 @@ public class DBManager {
     }
 
     //Проверяет, есть ли в БД такой юзер.
-    public boolean checkIfUserExists(String username) {
+    public static boolean checkIfUserExists(String username) {
         boolean check = false;
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection(url, login, password);
+            Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
                 Statement stmt = con.createStatement();
                 ResultSet result = stmt.executeQuery("SELECT * FROM Users WHERE username = '" + username + "'");
@@ -129,8 +131,6 @@ public class DBManager {
         }
         return check;
     }
-
-
 }
 
 

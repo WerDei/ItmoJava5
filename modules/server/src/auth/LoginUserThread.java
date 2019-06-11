@@ -1,7 +1,6 @@
-package net.werdei.talechars.server;
+package net.werdei.talechars.server.auth;
 
-import net.werdei.talechars.server.collections.CollectionHandler;
-import net.werdei.talechars.server.collections.Commands;
+import net.werdei.talechars.server.UserThread;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,28 +8,26 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class UserThread extends Thread
-{
+public class LoginUserThread extends Thread {
+
+
     private Socket socket;
     private String alias;
     private boolean connected;
+    private boolean loggedIn;
 
     private DataInputStream in;
     private DataOutputStream out;
 
-    private CollectionHandler collection;
-
-
-    public UserThread(Socket s, String alias)
+    public LoginUserThread(Socket s)
     {
         socket = s;
-        this.alias = alias;
+        alias = socket.getInetAddress().toString();
 
-        System.out.println(alias + "successfully logged in");
+        System.out.println("Established a connection with " + alias);
 
         connected = setupDataStreams();
-
-        collection = Main.getCollection();
+        loggedIn = false;
     }
 
     private boolean setupDataStreams()
@@ -49,7 +46,7 @@ public class UserThread extends Thread
         }
     }
 
-    @Override
+
     public void run()
     {
         try
@@ -59,7 +56,10 @@ public class UserThread extends Thread
                 String input = in.readUTF();
                 System.out.println(alias + " > " + input);
 
-                Commands.execute(input, this);
+                LoginCommands.execute(input, this);
+
+                if (loggedIn)
+                    return;
             }
         }
         catch (SocketException e)
@@ -75,10 +75,8 @@ public class UserThread extends Thread
         {
             System.out.println("Connection with " + alias + " has been lost");
         }
-
-        //System.out.println("Saving the collection of user " + alias);
-        collection.saveToFile("backup.json",this);
     }
+
 
     public void sendln(String message)
     {
@@ -92,33 +90,17 @@ public class UserThread extends Thread
         }
     }
 
-    public CollectionHandler getCollection()
+    public void setLogin(String login)
     {
-        return collection;
-    }
+        UserThread userThread = new UserThread(socket, login);
+        userThread.start();
 
-    public String getAlias()
-    {
-        return alias;
-    }
-
-    public Socket getSocket()
-    {
-        return socket;
-    }
-
-    public DataInputStream getInputStream()
-    {
-        return in;
-    }
-
-    public  DataOutputStream getOutputStream()
-    {
-        return out;
+        loggedIn = true;
     }
 
     public void setConnectedStatus(boolean status)
     {
         connected = status;
     }
+
 }

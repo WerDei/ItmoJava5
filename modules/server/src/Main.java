@@ -1,6 +1,7 @@
 package net.werdei.talechars.server;
 
 import net.werdei.talechars.NetworkInfo;
+import net.werdei.talechars.server.auth.LoginUserThread;
 import net.werdei.talechars.server.collections.CollectionHandler;
 
 import java.net.ServerSocket;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 public class Main
 {
     private static ServerSocket serverSocket;
-    private static ArrayList<UserThread> connectedUsers;
 
     private static CollectionHandler collectionHandler;
 
@@ -31,8 +31,6 @@ public class Main
             System.out.println("Using the default port");
         }
 
-        connectedUsers = new ArrayList<>();
-
         collectionHandler = new CollectionHandler();
 
         try
@@ -44,8 +42,7 @@ public class Main
 
             while (true)
             {
-                UserThread userThread = new UserThread(serverSocket.accept(), collectionHandler);
-                connectedUsers.add(userThread);
+                LoginUserThread userThread = new LoginUserThread(serverSocket.accept());
                 userThread.start();
             }
         }
@@ -53,5 +50,10 @@ public class Main
         {
             System.out.println("[ERROR] Error binding port: " + e.getMessage());
         }
+    }
+
+    public static CollectionHandler getCollection()
+    {
+        return collectionHandler;
     }
 }
