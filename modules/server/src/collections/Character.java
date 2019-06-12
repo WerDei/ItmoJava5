@@ -94,9 +94,6 @@ public class Character implements Comparable<Character>, Serializable
         return this.power;
     }
 
-    public String getLocation(){
-        return this.location.toString();
-    }
     public String getSpacedLocation(){
         return this.location.toSpacedString();
     }
@@ -106,7 +103,7 @@ public class Character implements Comparable<Character>, Serializable
     }
 
     public String getOwner(){
-        return this.owner;
+        return owner;
     }
     public void setOwner(String owner)
     {
@@ -142,7 +139,7 @@ public class Character implements Comparable<Character>, Serializable
 
         public String toSpacedString()
         {
-            return String.format(x + " " + y + " " + z);
+            return x + " " + y + " " + z;
         }
     }
 }

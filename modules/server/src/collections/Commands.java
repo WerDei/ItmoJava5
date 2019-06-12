@@ -135,13 +135,16 @@ public enum Commands {
                     return false;
                 }
 
-                private void removeElement(String json, UserThread userThread)
+                private void removeElement(String name, UserThread userThread)
                 {
                     try {
-                        Character c = CollectionHandler.getCharacterFromJson(json);
-                        if (c.getOwner().equals(userThread.getAlias())) // Проверка на хозяина
+                        Character c = userThread.getCollection().getCharacter(name);
+
+                        if (c == null)
+                            userThread.sendln("No character with that name was found");
+                        else if (c.getOwner().equals(userThread.getAlias())) // Проверка на хозяина
                         {
-                            userThread.getCollection().removeCharacter(json, userThread);
+                            userThread.getCollection().removeCharacter(name, userThread);
                             DBManager.deleteCharacter(c);
 
                             userThread.sendln("Element removed successfully");
@@ -156,7 +159,7 @@ public enum Commands {
 
                 @Override
                 protected String getUsage() {
-                    return "remove <element>";
+                    return "remove <name>";
                 }
             },
 /*

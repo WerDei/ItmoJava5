@@ -181,6 +181,14 @@ public class CollectionHandler
         return getCharacterFromJson(json).compareTo(characters.last());
     }
 
+    public Character getCharacter(String name)
+    {
+        for (Character c : characters)
+            if (c.getName().equals(name))
+                return c;
+
+        return null;
+    }
 
     // Printing information
 
