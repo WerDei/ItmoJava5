@@ -19,12 +19,8 @@ public class DBManager {
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(DBURL, DBLOGIN, DBPASSWORD);
             try {
-                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Characters7 WHERE name = ? AND description = ? AND power = ? AND location = ? AND creation_moment = ?");
+                PreparedStatement stmt = con.prepareStatement("SELECT * FROM Characters7 WHERE name = ?");
                 stmt.setString(1, character.getName());
-                stmt.setString(2, character.getDescription());
-                stmt.setInt(3, character.getPower());
-                stmt.setString(4, character.getSpacedLocation());
-                stmt.setString(5, character.getCreationMoment().toString());
                 ResultSet result = stmt.executeQuery();
                 if (result.next())
                     System.out.println("Объект уже существует");

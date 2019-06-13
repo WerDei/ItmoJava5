@@ -26,7 +26,7 @@ public class MailSender {
     {
         // Генерация пароля
         String generatedPassword = new Random()
-                .ints(10, 33, 122)
+                .ints(5, 33, 122)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
